@@ -78,8 +78,11 @@ theme: fluid
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: https://github.com/fibbery/fibbery.github.io.git
-  branch: master
+  repo: 
+   github:
+     url: https://github.com/fibbery/fibbery.github.io.git
+     branch: master
+     token: $secrect.HEXO_DEPLOY_PRI
 
 jsonContent:
   meta: false
