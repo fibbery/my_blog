@@ -80,9 +80,8 @@ deploy:
   type: git
   repo: 
    github:
-     url: https://github.com/fibbery/fibbery.github.io.git
+     url: git@github.com:fibbery/fibbery.github.io.git
      branch: master
-     token: $ACCESS_TOKEN
 
 jsonContent:
   meta: false
