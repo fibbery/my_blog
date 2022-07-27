@@ -1,15 +1,20 @@
 ---
 title: golang中的系统调用
 date: 2022-07-27 10:53:13
+index_img: /images/golang.webp
+banner_img: /images/banner.webp
+excerpt: 聊一聊golang如何实现系统调用的
 tags:
   - golang
   - syscall
+categories: 技术文章
 ---
 
 ## 什么是系统调用
 
-> In computing, a system call (commonly abbreviated to syscall) is the programmatic way in which a computer program requests a service from the kernel of the operating system on which it is executed. This may include hardware-related services (for example, accessing a hard disk drive or accessing the device's camera), creation and execution of new processes, and communication with integral kernel services such as process scheduling. System calls provide an essential interface between a process and the operating system.
-> 
+{% note info %}
+In computing, a system call (commonly abbreviated to syscall) is the programmatic way in which a computer program requests a service from the kernel of the operating system on which it is executed. This may include hardware-related services (for example, accessing a hard disk drive or accessing the device's camera), creation and execution of new processes, and communication with integral kernel services such as process scheduling. System calls provide an essential interface between a process and the operating system.
+{% endnote %} 
 
 以上是维基百科上关于[系统调用](https://en.wikipedia.org/wiki/System_call)的介绍，实际概括一句话就是: 运行在用户空间的程序向内核请求调用需要更高权限的服务，诸如一些：
 
@@ -22,15 +27,13 @@ tags:
 
 ## Golang中是如何做系统调用的
 
-> golang 调试环境
-> 
-> 
-> version： 1.16.15
-> 
-> os: linux
-> 
-> arch: amd64
-> 
+{% note primary %}
+golang 调试环境
+version： 1.16.15
+os: linux
+arch: amd64
+{% endnote %}
+ 
 
 golang中系统调用主要分成两部分实现，分别在syscall包中和runtime包里。syscall中暴露的一些系统调用的接口，都是直接提供给用户程序使用的。runtime包中则是供内部使用的，对用户程序不可见的。
 
@@ -149,11 +152,10 @@ ok1:
 | --- | --- | --- | --- | --- | --- | --- |
 | 参数1 | 参数2 | 参数3/返回值 | 参数4 | 参数5 | 参数6 | 调用指令/返回值 |
 
-> golang使用的是plan9汇编，和IA64名字上存在映射关系，大致映射规则是少了一个R前缀。例如DI代表中RDI。
-> 
-> 
-> 同时，plan9引入了四个伪寄存器：FP、PC、SB、SP，可以参见[plan9 assembly解析](https://segmentfault.com/a/1190000039978109)大致了解一下
-> 
+{% note info %}
+golang使用的是plan9汇编，和IA64名字上存在映射关系，大致映射规则是少了一个R前缀。例如DI代表中RDI。
+同时，plan9引入了四个伪寄存器：FP、PC、SB、SP，可以参见[plan9 assembly解析](https://segmentfault.com/a/1190000039978109)大致了解一下
+{% endnote %}
 
 上面代码也可以看出来，RawSyscall相较于Syscall只是少了开始的runtime·entersyscall以及执行完调用之后的runtime·exitsyscall。
 
@@ -227,11 +229,12 @@ func reentersyscall(pc, sp uintptr) {
 2. 唤醒sysmon线程，让其执行retake()抢占式调度阻塞的P
 3. 修改P的状态
 
-> 当 P 处于 _Psyscall 状态时，表明对应的 goroutine 正在进行系统调用。如果抢占 p，需要满足几个条件：
-> 
-> 1. p 的本地运行队列里面有等待运行的 goroutine。这时 p 绑定的 g 正在进行系统调用，无法去执行其他的 g，因此需要接管 p 来执行其他的 g。
-> 2. 没有“无所事事”的 p。`sched.nmspinning` 和 `sched.npidle` 都为 0，这就意味着没有“找工作”的 m，也没有空闲的 p，大家都在“忙”，可能有很多工作要做。因此要抢占当前的 p，让它来承担一部分工作。
-> 3. 从上一次监控线程观察到 p 对应的 m 处于系统调用之中到现在已经超过 10 毫秒。这说明系统调用所花费的时间较长，需要对其进行抢占，以此来使得 `retake` 函数返回值不为 0，这样，会保持 sysmon 线程 20 us 的检查周期，提高 sysmon 监控的实时性。
+{% note info %}
+当 P 处于 _Psyscall 状态时，表明对应的 goroutine 正在进行系统调用。如果抢占 p，需要满足几个条件：
+1. p 的本地运行队列里面有等待运行的 goroutine。这时 p 绑定的 g 正在进行系统调用，无法去执行其他的 g，因此需要接管 p 来执行其他的 g。
+2. 没有“无所事事”的 p。`sched.nmspinning` 和 `sched.npidle` 都为 0，这就意味着没有“找工作”的 m，也没有空闲的 p，大家都在“忙”，可能有很多工作要做。因此要抢占当前的 p，让它来承担一部分工作。
+3. 从上一次监控线程观察到 p 对应的 m 处于系统调用之中到现在已经超过 10 毫秒。这说明系统调用所花费的时间较长，需要对其进行抢占，以此来使得 `retake` 函数返回值不为 0，这样，会保持 sysmon 线程 20 us 的检查周期，提高 sysmon 监控的实时性。
+{% endnote %}
 
 ### runtime.syscallexit
 
