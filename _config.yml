@@ -82,7 +82,7 @@ deploy:
    github:
      url: https://github.com/fibbery/fibbery.github.io.git
      branch: master
-     token: $secrect.HEXO_DEPLOY_PRI
+     token: $ACCESS_TOKEN
 
 jsonContent:
   meta: false
