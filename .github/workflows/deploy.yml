@@ -51,6 +51,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm install --force
+          npm install hexo-deployer-git --save
 
       - name: Deploy hexo
         run: |
