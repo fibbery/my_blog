@@ -3,6 +3,8 @@ title: CIDR地址范围计算
 date: 2023-10-31T15:06:23+08:00
 categories: 笔记
 excerpt: 如何获取CIDR地址范围
+index_img: /images/cidr/index.webp
+banner_img: /images/banner.webp
 tags:
   - tech
 ---

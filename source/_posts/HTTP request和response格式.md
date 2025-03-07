@@ -3,6 +3,8 @@ title: HTTP request和response格式
 date: 2023-10-31T15:18:39+08:00
 categories: 笔记
 excerpt: 介绍Http request和response格式区别
+index_img: /images/http/index.webp
+banner_img: /images/banner.webp
 tags:
   - tech
 ---
