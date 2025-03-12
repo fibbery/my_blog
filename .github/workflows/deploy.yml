@@ -22,14 +22,20 @@ jobs:
         run: |
           npm install -g hexo-cli
           npm install
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Build Hexo site
         run: hexo generate
 
       - name: Deploy to GitHub Pages
         env:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}  # 使用之前配置的 Secret
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
-          git config --global user.name "fibbery"  # 替换为你的名字
-          git config --global user.email "jiangnenghua1992@gmail.com"  # 替换为你的邮箱
+          git config --global user.name "fibbery" 
+          git config --global user.email "jiangnenghua1992@gmail.com"
           hexo deploy
